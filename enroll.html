@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>University App | Enroll</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- CSS only -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
+</head>
+
+<body>
+
+    <nav class="navbar sticky-top navbar-dark bg-primary justify-content-end">
+        <a class="navbar-brand" href="index.html">Home</a>
+        <a class="navbar-brand" href="student-show.html">Students</a>
+        <a class="navbar-brand" href="faculty-show.html">Faculties</a>
+        <a class="navbar-brand" href="enroll.html">Enroll</a>
+    </nav>
+
+    <br>    
+
+    <div class="container">
+        <form>
+            <div class="mb-3">
+                <label for="exampleInputEmail1" class="form-label">Faculty Name</label>
+                <input type="text" class="form-control" id="name">
+            </div>
+            <div class="mb-3">
+                <label for="exampleInputPassword1" class="form-label">Unique Student Number</label>
+                <input type="text" class="form-control" id="usn">
+            </div>
+            <hr>
+            <button type="submit" class="btn btn-primary" id="enroll">Enroll</button>
+            <button type="submit" class="btn btn-primary" id="withdraw">Withdraw</button>
+        </form>
+    </div>
+
+
+
+
+
+    <script>
+        document.getElementById("enroll").onclick = function () {
+
+            let name = document.getElementById("name").value
+            let usn = document.getElementById("usn").value
+
+            let url = 'http://localhost:8080/faculty/enroll/' + name + '/usn/' + usn
+
+            let request = fetch(url, {
+                method: 'PUT',
+            }).then(response => response.json()).then(
+                alert('Student with unique student number ' + usn + ' is enrolled to ' + name)
+            ).catch(error => {
+                alert('Student with unique student number ' + usn + ' is already enrolled to ' + name)
+            });
+
+        }
+
+        document.getElementById("withdraw").onclick = function () {
+
+            let name = document.getElementById("name").value
+            let usn = document.getElementById("usn").value
+
+            let url = 'http://localhost:8080/faculty/remove/' + name + '/usn/' + usn
+
+            let request = fetch(url, {
+                method: 'PUT',
+            }).then(response => response.json()).then(
+                alert('Student with unique student number ' + usn + ' is withdrawn from ' + name)
+            ).catch(error => {
+                alert('Student with unique student number ' + usn + ' is not enroller at ' + name)
+            });
+
+        }
+
+    </script>
+</body>
+
+</html>

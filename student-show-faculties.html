@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>University App | Students</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- CSS only -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
+</head>
+
+<body>
+
+    <nav class="navbar sticky-top navbar-dark bg-primary justify-content-end">
+        <a class="navbar-brand" href="index.html">Home</a>
+        <a class="navbar-brand" href="student-show.html">Students</a>
+        <a class="navbar-brand" href="faculty-show.html">Faculties</a>
+        <a class="navbar-brand" href="enroll.html">Enroll</a>
+    </nav>
+    <br>
+    <div class="container">
+        <div class="mb-3 row">
+            <label for="newTask" class="col-sm-2 col-form-label">Unique student number</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" id="usn" autofocus>
+            </div>
+            <br>
+            <br>
+            <button type="submit" class="btn btn-primary" id="submitBtn">Submit</button>
+        </div>
+        <ul class="list-group" id="taskList">
+        </ul>
+    </div>
+
+    <hr><br>
+
+    <div class="container" id="table">
+        <h4></h4>
+        <table class="table table-striped">
+            <thead class="table-dark">
+                <tr>
+                    <th scope="col">Name</th>
+                    <th scope="col">City</th>
+                </tr>
+            </thead>
+            <tbody id="table_body">
+
+            </tbody>
+        </table>
+    </div>
+
+
+
+
+
+    <script>
+        let input = document.querySelector('#usn')
+        
+        input.addEventListener("keypress", function (event) {
+
+            if (event.key === "Enter") {
+
+                event.preventDefault();
+
+                document.getElementById("submitBtn").click();
+            }
+
+        });
+
+        document.getElementById('submitBtn').onclick = function () {
+            let usn = input.value
+            document.querySelector('#table h4').innerText = 'Student with unique student number: ' + usn + ' is enrolled at following faculties'
+
+            document.querySelector('#usn').value = ''
+
+            fetch('http://localhost:8080/faculty/usn/' + usn)
+                .then((data) => {
+                    console.table(data)
+                    return data.json();
+                }).then((objectData) => {
+                    console.table(objectData)
+
+                    let tableData = "";
+                    objectData.map((values) => {
+                        tableData += `<tr>
+            <td>${values.name}</td>
+            <td>${values.city}</td>
+        </tr>`;
+                    });
+                    document.getElementById('table_body').innerHTML = tableData;
+                }).catch((err) => {
+                    console.log(err);
+                })
+        }
+
+
+    </script>
+</body>
+
+</html>

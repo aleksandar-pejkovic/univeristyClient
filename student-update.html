@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>University App | Create student</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- CSS only -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
+</head>
+
+<body>
+
+    <nav class="navbar sticky-top navbar-dark bg-primary justify-content-end">
+        <a class="navbar-brand" href="index.html">Home</a>
+        <a class="navbar-brand" href="student-show.html">Students</a>
+        <a class="navbar-brand" href="faculty-show.html">Faculties</a>
+        <a class="navbar-brand" href="enroll.html">Enroll</a>
+    </nav>
+
+    <nav class="navbar navbar-light bg-white justify-content-end">
+        <a class="navbar-brand" href="student-create.html">Create</a>
+        <a class="navbar-brand" href="student-update.html">Update</a>
+        <a class="navbar-brand" href="student-delete.html">Delete</a>
+        <a class="navbar-brand" href="student-filter.html">Filter</a>
+    </nav>
+
+    <div class="container">
+        <h4>Student details to update</h4>
+        <div class="form-floating mb-3">
+            <input type="text" class="form-control" id="name" placeholder="a">
+            <label for="name">Name</label>
+        </div>
+        <div class="form-floating mb-3">
+            <input type="date" class="form-control" id="birthday" placeholder="a">
+            <label for="birthday">Birthday</label>
+        </div>
+        <div class="form-floating mb-3">
+            <input type="text" class="form-control" id="city" placeholder="a">
+            <label for="city">City</label>
+        </div>
+        <div class="form-floating mb-3">
+            <input type="number" class="form-control" id="usn" placeholder="a">
+            <label for="usn">Unique student number</label>
+        </div>
+        <div class="form-floating mb-3">
+            <input type="number" class="form-control" id="tel" placeholder="a">
+            <label for="tel">Phone number</label>
+        </div>
+        <div class="form-floating mb-3">
+            <input type="text" class="form-control" id="email" placeholder="a">
+            <label for="email">Email</label>
+        </div>
+        <button type="button" class="btn btn-primary" id="submitBtn">Submit</button>
+    </div>
+
+
+    <script>
+        document.getElementById("submitBtn").onclick = function () {
+
+            let name = document.getElementById("name").value
+            let birthday = document.getElementById("birthday").value
+            let city = document.getElementById("city").value
+            let uniqueStudentNumber = document.getElementById("usn").value
+            let phone = document.getElementById("tel").value + ''
+            let email = document.getElementById("email").value
+
+            let formatedBirthday
+            if (!birthday === '') {
+                let date, month, year
+                date = birthday.substring(8, 10)
+                month = birthday.substring(5, 7)
+                year = birthday.substring(0, 4)
+                formatedBirthday = date + '.' + month + '.' + year + '.'
+            }
+
+            let student = {
+                name: name,
+                birthday: formatedBirthday,
+                city: city,
+                uniqueStudentNumber: uniqueStudentNumber,
+                phoneNumber: phone,
+                email: email
+            }
+
+            if(!student.name==='' && student.name.length < 3){
+                alert("Student's name must be atleast 3 charachters long!")
+                return
+            }
+            if(student.uniqueStudentNumber===''){
+                alert("Unique Student Number field can't be empty!")
+                return
+            }
+
+            if (name === '') {
+                delete student.name
+            } else if (birthday === '') {
+                delete student.birthday
+            } else if (city === '') {
+                delete student.city
+            } else if (uniqueStudentNumber === '') {
+                delete student.uniqueStudentNumber
+            } else if (phone === '') {
+                delete student.phoneNumber
+            } else if (email === '') {
+                delete student.email
+            }
+
+            fetch('http://localhost:8080/student/update', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(
+                    student
+                )
+            }).then(response => response.json())
+                .then(data => {
+                    console.table(data);
+                }).catch(error => {
+                    alert('Failed to load data from server! ' + error);
+                });
+
+        }
+    </script>
+</body>
+
+</html>

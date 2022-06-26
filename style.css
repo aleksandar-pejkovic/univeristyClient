@@ -1,0 +1,14 @@
+
+
+#formContainer {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+}
+
+#table {
+    max-height: 600px;
+    overflow: auto;
+}

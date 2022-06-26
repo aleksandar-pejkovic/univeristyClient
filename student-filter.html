@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>University App | Filter students</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- CSS only -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
+</head>
+
+<body>
+
+    <nav class="navbar sticky-top navbar-dark bg-primary justify-content-end">
+        <a class="navbar-brand" href="index.html">Home</a>
+        <a class="navbar-brand" href="student-show.html">Students</a>
+        <a class="navbar-brand" href="faculty-show.html">Faculties</a>
+        <a class="navbar-brand" href="enroll.html">Enroll</a>
+    </nav>
+
+    <nav class="navbar navbar-light bg-white justify-content-end">
+        <a class="navbar-brand" href="faculty-create.html">Create</a>
+        <a class="navbar-brand" href="faculty-update.html">Update</a>
+        <a class="navbar-brand" href="faculty-delete.html">Delete</a>
+        <a class="navbar-brand" href="faculty-filter.html">Filter</a>
+    </nav>
+
+    <div class="container">
+        <h4>Filter students by given options</h4>
+        <div class="form-floating mb-3">
+            <input type="text" class="form-control" id="city" placeholder="a" autofocus>
+            <label for="city">City</label>
+        </div>
+
+        <div class="form-floating mb-3">
+            <input type="number" class="form-control" id="age" placeholder="a" autofocus>
+            <label for="age">Age</label>
+            <div class="input-group mb-3">
+                <select class="form-select" id="inputGroupSelect02">
+                    <option selected>Choose operation...</option>
+                    <option value="1">Less tnen</option>
+                    <option value="2">More then</option>
+                </select>
+                <label class="input-group-text" for="inputGroupSelect02">Options</label>
+            </div>
+        </div>
+
+        <button type="button" class="btn btn-primary" id="cityBtn">Filter by city</button>
+        <button type="button" class="btn btn-primary" id="ageBtn">Filter by age</button>
+        <button type="button" class="btn btn-primary" id="cityAgeBtn">Filter by all conditions</button>
+    </div>
+
+    <hr><br>
+
+    <div class="container" id="table">
+        <h4></h4>
+        <table class="table table-striped">
+            <thead class="table-dark">
+                <tr>
+                    <th scope="col">Name</th>
+                    <th scope="col">Birthday</th>
+                    <th scope="col">City</th>
+                    <th scope="col">USN</th>
+                    <th scope="col">Phone</th>
+                    <th scope="col">Email</th>
+                </tr>
+            </thead>
+            <tbody id="table_body">
+
+            </tbody>
+        </table>
+    </div>
+
+
+    <script>
+
+        document.getElementById("cityBtn").onclick = function () {
+
+            let city = document.querySelector('#city').value
+            if (city === '') {
+                alert("City field can't be empty!")
+                return
+            }
+            city = city.toUpperCase()
+
+            document.querySelector('#table h4').innerText = 'All students from ' + city + ' are listed'
+
+            fetch('http://localhost:8080/student/city/' + city)
+                .then((data) => {
+                    console.table(data)
+                    return data.json();
+                }).then((objectData) => {
+                    console.table(objectData)
+                    if (objectData.length === 0) {
+                        document.querySelector('#table h4').innerText = 'There are no students with given conditions in the database'
+                    }
+
+                    let tableData = "";
+                    objectData.map((values) => {
+                        tableData += `<tr>
+                        <td>${values.name}</td>
+                        <td>${values.birthday}</td>
+                        <td>${values.city}</td>
+                        <td>${values.uniqueStudentNumber}</td>
+                        <td>${values.phoneNumber}</td>
+                        <td>${values.email}</td>
+                        </tr>`;
+                    });
+                    document.getElementById('table_body').innerHTML = tableData;
+                }).catch((err) => {
+                    console.log(err);
+                })
+        }
+
+        document.getElementById("ageBtn").onclick = function () {
+
+            let age = document.querySelector('#age').value
+            if (age === '') {
+                alert("Age field can't be empty!")
+                return
+            }
+            let operator = document.querySelector('#inputGroupSelect02').value
+            let url
+            let msg
+
+            if (operator == 1) {
+                url = 'http://localhost:8080/student/operator/</age/' + age
+                msg = 'All students younger than ' + age + ' years'
+            } else if (operator == 2) {
+                url = 'http://localhost:8080/student/operator/>/age/' + age
+                msg = 'All students older than ' + age + ' years'
+            } else {
+                url = 'http://localhost:8080/student/age/' + age
+                msg = 'All students that are precisely ' + age + ' years old'
+            }
+
+            document.querySelector('#table h4').innerText = msg
+
+            fetch(url)
+                .then((data) => {
+                    console.table(data)
+                    return data.json();
+                }).then((objectData) => {
+                    console.table(objectData)
+                    if (objectData.length === 0) {
+                        document.querySelector('#table h4').innerText = 'There are no students with given conditions in the database'
+                    }
+
+                    let tableData = "";
+                    objectData.map((values) => {
+                        tableData += `<tr>
+                        <td>${values.name}</td>
+                        <td>${values.birthday}</td>
+                        <td>${values.city}</td>
+                        <td>${values.uniqueStudentNumber}</td>
+                        <td>${values.phoneNumber}</td>
+                        <td>${values.email}</td>
+                        </tr>`;
+                    });
+                    document.getElementById('table_body').innerHTML = tableData;
+                }).catch((err) => {
+                    console.log(err);
+                })
+        }
+
+
+        document.getElementById("cityAgeBtn").onclick = function () {
+
+            let city = document.querySelector('#city').value
+            if (city === '') {
+                alert("City field can't be empty!")
+                return
+            }
+            city = city.toUpperCase()
+
+            let age = document.querySelector('#age').value
+            if (age === '') {
+                alert("Age field can't be empty!")
+                return
+            }
+            let operator = document.querySelector('#inputGroupSelect02').value
+            let url
+            let msg
+
+            if (operator == 1) {
+                url = 'http://localhost:8080/student/city/' + city + '/operator/</age/' + age
+                msg = 'All students younger than ' + age + ' years from ' + city
+            } else if (operator == 2) {
+                url = 'http://localhost:8080/student/city/' + city + '/operator/>/age/' + age
+                msg = 'All students older than ' + age + ' years from ' + city
+            } else {
+                url = 'http://localhost:8080/student/city/' + city + '/operator/x/age/' + age
+                msg = 'All students that are precisely ' + age + ' years old from ' + city
+            }
+
+            document.querySelector('#table h4').innerText = msg
+
+            fetch(url)
+                .then((data) => {
+                    console.table(data)
+                    return data.json();
+                }).then((objectData) => {
+                    console.table(objectData)
+                    if (objectData.length === 0) {
+                        document.querySelector('#table h4').innerText = 'There are no students with given conditions in the database'
+                    }
+
+                    let tableData = "";
+                    objectData.map((values) => {
+                        tableData += `<tr>
+                        <td>${values.name}</td>
+                        <td>${values.birthday}</td>
+                        <td>${values.city}</td>
+                        <td>${values.uniqueStudentNumber}</td>
+                        <td>${values.phoneNumber}</td>
+                        <td>${values.email}</td>
+                        </tr>`;
+                    });
+                    document.getElementById('table_body').innerHTML = tableData;
+                }).catch((err) => {
+                    console.log(err);
+                })
+        }
+
+
+    </script>
+</body>
+
+</html>

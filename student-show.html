@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>University App | Students</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- CSS only -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
+</head>
+
+<body>
+
+    <nav class="navbar sticky-top navbar-dark bg-primary justify-content-end">
+        <a class="navbar-brand" href="index.html">Home</a>
+        <a class="navbar-brand" href="student-show.html">Students</a>
+        <a class="navbar-brand" href="faculty-show.html">Faculties</a>
+        <a class="navbar-brand" href="enroll.html">Enroll</a>
+    </nav>
+
+    <nav class="navbar navbar-light bg-white justify-content-end">
+        <a class="navbar-brand" href="student-create.html">Create</a>
+        <a class="navbar-brand" href="student-update.html">Update</a>
+        <a class="navbar-brand" href="student-delete.html">Delete</a>
+        <a class="navbar-brand" href="student-filter.html">Filter</a>
+    </nav>
+
+
+    <div class="container">
+        <br>
+        <h4>Click the link below to show faculties of a student</h4>
+        <a class="navbar-brand" href="student-show-faculties.html">Show faculties of a student</a>
+    </div>
+
+
+    <hr><br>
+
+    <div class="container" id="table">
+        <table class="table table-striped">
+            <thead class="table-dark">
+                <tr>
+                    <th scope="col">Name</th>
+                    <th scope="col">Birthday</th>
+                    <th scope="col">City</th>
+                    <th scope="col">USN</th>
+                    <th scope="col">Phone</th>
+                    <th scope="col">Email</th>
+                </tr>
+            </thead>
+            <tbody id="table_body">
+
+            </tbody>
+        </table>
+    </div>  
+
+
+
+
+
+    <script>
+
+        let tableDiv = document.querySelector('#table')
+        let title = document.createElement('h4')
+        title.innerText = 'List of all students'
+        tableDiv.prepend(title)
+
+        fetch('http://localhost:8080/student/getAll')
+            .then((data) => {
+                console.table(data)
+                return data.json();
+            }).then((objectData) => {
+                console.table(objectData)
+
+                let tableData = "";
+                objectData.map((values) => {
+                    tableData += `<tr>
+                    <td>${values.name}</td>
+                    <td>${values.birthday}</td>
+                    <td>${values.city}</td>
+                    <td>${values.uniqueStudentNumber}</td>
+                    <td>${values.phoneNumber}</td>
+                    <td>${values.email}</td>
+                    </tr>`;
+                });
+                document.getElementById('table_body').innerHTML = tableData;
+            }).catch((err) => {
+                console.log(err);
+            })
+    </script>
+</body>
+
+</html>

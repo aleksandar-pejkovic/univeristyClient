@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>University App | Filter faculties</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- CSS only -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
+</head>
+
+<body>
+
+    <nav class="navbar sticky-top navbar-dark bg-primary justify-content-end">
+        <a class="navbar-brand" href="index.html">Home</a>
+        <a class="navbar-brand" href="student-show.html">Students</a>
+        <a class="navbar-brand" href="faculty-show.html">Faculties</a>
+        <a class="navbar-brand" href="enroll.html">Enroll</a>
+    </nav>
+
+    <nav class="navbar navbar-light bg-white justify-content-end">
+        <a class="navbar-brand" href="faculty-create.html">Create</a>
+        <a class="navbar-brand" href="faculty-update.html">Update</a>
+        <a class="navbar-brand" href="faculty-delete.html">Delete</a>
+        <a class="navbar-brand" href="faculty-filter.html">Filter</a>
+    </nav>
+
+    <div class="container">
+        <h4>Filter faculties by given options</h4>
+        <div class="form-floating mb-3">
+            <input type="text" class="form-control" id="city" placeholder="a" autofocus>
+            <label for="city">City</label>
+        </div>
+
+        <div class="form-floating mb-3">
+            <input type="number" class="form-control" id="numberOfStudents" placeholder="a" autofocus>
+            <label for="numberOfStudents">Number of students</label>
+            <div class="input-group mb-3">
+                <select class="form-select" id="inputGroupSelect02">
+                    <option selected>Choose operation...</option>
+                    <option value="1">Less tnen</option>
+                    <option value="2">More then</option>
+                </select>
+                <label class="input-group-text" for="inputGroupSelect02">Options</label>
+            </div>
+        </div>
+
+        <button type="button" class="btn btn-primary" id="cityBtn">Filter by city</button>
+        <button type="button" class="btn btn-primary" id="numberOfStudentsBtn">Filter by number of students</button>
+        <button type="button" class="btn btn-primary" id="cityNumberBtn">Filter by all conditions</button>
+    </div>
+
+    <hr><br>
+
+    <div class="container" id="table">
+        <h4></h4>
+        <table class="table table-striped">
+            <thead class="table-dark">
+                <tr>
+                    <th scope="col">Name</th>
+                    <th scope="col">City</th>
+                </tr>
+            </thead>
+            <tbody id="table_body">
+
+            </tbody>
+        </table>
+    </div>
+
+
+    <script>
+
+        document.getElementById("cityBtn").onclick = function () {
+
+            let city = document.querySelector('#city').value
+            if (city === '') {
+                alert("City field can't be empty!")
+                return
+            }
+            city = city.toUpperCase()
+
+            document.querySelector('#table h4').innerText = 'All faculties from ' + city + ' are listed'
+
+            fetch('http://localhost:8080/faculty/city/' + city)
+                .then((data) => {
+                    console.table(data)
+                    return data.json();
+                }).then((objectData) => {
+                    console.table(objectData)
+                    if (objectData.length === 0) {
+                        document.querySelector('#table h4').innerText = 'There are no faculties from ' + city + ' in the database'
+                    }
+
+                    let tableData = "";
+                    objectData.map((values) => {
+                        tableData += `<tr>
+                        <td>${values.name}</td>
+                        <td>${values.city}</td>
+                        </tr>`;
+                    });
+                    document.getElementById('table_body').innerHTML = tableData;
+                }).catch((err) => {
+                    console.log(err);
+                })
+        }
+
+        document.getElementById("numberOfStudentsBtn").onclick = function () {
+
+            let numberOfStudents = document.querySelector('#numberOfStudents').value
+            if (numberOfStudents === '') {
+                alert("Number of students field can't be empty!")
+                return
+            }
+            let operator = document.querySelector('#inputGroupSelect02').value
+            let url
+            let msg
+
+            if (operator == 1) {
+                url = 'http://localhost:8080/faculty/operator/</numberOfStudents/' + numberOfStudents
+                msg = 'All faculties with less than ' + numberOfStudents + ' students'
+            } else if (operator == 2) {
+                url = 'http://localhost:8080/faculty/operator/>/numberOfStudents/' + numberOfStudents
+                msg = 'All faculties with more than ' + numberOfStudents + ' students'
+            } else {
+                url = 'http://localhost:8080/faculty/numberOfStudents/' + numberOfStudents
+                msg = 'All faculties with ' + numberOfStudents + ' students'
+            }
+
+            document.querySelector('#table h4').innerText = msg
+
+            fetch(url, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }).then((data) => {
+                console.table(data)
+                return data.json();
+            }).then((objectData) => {
+                console.table(objectData)
+                if (objectData.length === 0) {
+                    document.querySelector('#table h4').innerText = 'There are no faculties with given conditions in the database'
+                }
+
+                let tableData = "";
+                objectData.map((values) => {
+                    tableData += `<tr>
+                        <td>${values.name}</td>
+                        <td>${values.city}</td>
+                        </tr>`;
+                });
+                document.getElementById('table_body').innerHTML = tableData;
+            }).catch((err) => {
+                console.log(err);
+            })
+        }
+
+        document.getElementById("cityNumberBtn").onclick = function () {
+
+            let city = document.querySelector('#city').value
+
+            let numberOfStudents = document.querySelector('#numberOfStudents').value
+
+            if (city === '') {
+                alert("City field can't be empty!")
+                return
+            }
+            if (numberOfStudents === '') {
+                alert("Number of students field can't be empty!")
+                return
+            }
+            let operator = document.querySelector('#inputGroupSelect02').value
+            let url
+            let msg
+
+            if (operator == 1) {
+                url = 'http://localhost:8080/faculty/city/' + city + '/operator/</numberOfStudents/' + numberOfStudents
+                msg = 'All faculties with less than ' + numberOfStudents + ' students from ' + city
+            } else if (operator == 2) {
+                url = 'http://localhost:8080/faculty/city/' + city + '/operator/>/numberOfStudents/' + numberOfStudents
+                msg = 'All faculties with more than ' + numberOfStudents + ' students from ' + city
+            } else {
+                url = 'http://localhost:8080/faculty/city/' + city + '/operator/x/numberOfStudents/' + numberOfStudents
+                msg = 'All faculties with precisely ' + numberOfStudents + ' students from ' + city
+            }
+
+            document.querySelector('#table h4').innerText = msg
+
+            fetch(url, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }).then((data) => {
+                console.table(data)
+                return data.json();
+            }).then((objectData) => {
+                console.table(objectData)
+                if (objectData.length === 0) {
+                    document.querySelector('#table h4').innerText = 'There are no faculties with given conditions in the database'
+                }
+
+                let tableData = "";
+                objectData.map((values) => {
+                    tableData += `<tr>
+                	<td>${values.name}</td>
+                    <td>${values.city}</td>
+                    </tr>`;
+                });
+                document.getElementById('table_body').innerHTML = tableData;
+            }).catch((err) => {
+                console.log(err);
+            })
+        }
+
+
+    </script>
+</body>
+
+</html>
