@@ -77,9 +77,11 @@
 
     <script>
 
+        let city, url, age, operator, msg
+
         document.getElementById("cityBtn").onclick = function () {
 
-            let city = document.querySelector('#city').value
+            city = document.querySelector('#city').value
             if (city === '') {
                 alert("City field can't be empty!")
                 return
@@ -87,44 +89,19 @@
             city = city.toUpperCase()
 
             document.querySelector('#table h4').innerText = 'All students from ' + city + ' are listed'
+            url = 'http://localhost:8080/student/city/' + city
 
-            fetch('http://localhost:8080/student/city/' + city)
-                .then((data) => {
-                    console.table(data)
-                    return data.json();
-                }).then((objectData) => {
-                    console.table(objectData)
-                    if (objectData.length === 0) {
-                        document.querySelector('#table h4').innerText = 'There are no students with given conditions in the database'
-                    }
-
-                    let tableData = "";
-                    objectData.map((values) => {
-                        tableData += `<tr>
-                        <td>${values.name}</td>
-                        <td>${values.birthday}</td>
-                        <td>${values.city}</td>
-                        <td>${values.uniqueStudentNumber}</td>
-                        <td>${values.phoneNumber}</td>
-                        <td>${values.email}</td>
-                        </tr>`;
-                    });
-                    document.getElementById('table_body').innerHTML = tableData;
-                }).catch((err) => {
-                    console.log(err);
-                })
+            fetchDataAndPopulateTable(url)
         }
 
         document.getElementById("ageBtn").onclick = function () {
 
-            let age = document.querySelector('#age').value
+            age = document.querySelector('#age').value
             if (age === '') {
                 alert("Age field can't be empty!")
                 return
             }
-            let operator = document.querySelector('#inputGroupSelect02').value
-            let url
-            let msg
+            operator = document.querySelector('#inputGroupSelect02').value
 
             if (operator == 1) {
                 url = 'http://localhost:8080/student/operator/</age/' + age
@@ -139,51 +116,25 @@
 
             document.querySelector('#table h4').innerText = msg
 
-            fetch(url)
-                .then((data) => {
-                    console.table(data)
-                    return data.json();
-                }).then((objectData) => {
-                    console.table(objectData)
-                    if (objectData.length === 0) {
-                        document.querySelector('#table h4').innerText = 'There are no students with given conditions in the database'
-                    }
-
-                    let tableData = "";
-                    objectData.map((values) => {
-                        tableData += `<tr>
-                        <td>${values.name}</td>
-                        <td>${values.birthday}</td>
-                        <td>${values.city}</td>
-                        <td>${values.uniqueStudentNumber}</td>
-                        <td>${values.phoneNumber}</td>
-                        <td>${values.email}</td>
-                        </tr>`;
-                    });
-                    document.getElementById('table_body').innerHTML = tableData;
-                }).catch((err) => {
-                    console.log(err);
-                })
+            fetchDataAndPopulateTable(url)
         }
 
 
         document.getElementById("cityAgeBtn").onclick = function () {
 
-            let city = document.querySelector('#city').value
+            city = document.querySelector('#city').value
             if (city === '') {
                 alert("City field can't be empty!")
                 return
             }
             city = city.toUpperCase()
 
-            let age = document.querySelector('#age').value
+            age = document.querySelector('#age').value
             if (age === '') {
                 alert("Age field can't be empty!")
                 return
             }
-            let operator = document.querySelector('#inputGroupSelect02').value
-            let url
-            let msg
+            operator = document.querySelector('#inputGroupSelect02').value
 
             if (operator == 1) {
                 url = 'http://localhost:8080/student/city/' + city + '/operator/</age/' + age
@@ -198,6 +149,11 @@
 
             document.querySelector('#table h4').innerText = msg
 
+            fetchDataAndPopulateTable(url)
+            
+        }
+
+        function fetchDataAndPopulateTable(url){
             fetch(url)
                 .then((data) => {
                     console.table(data)
